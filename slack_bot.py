@@ -17,10 +17,10 @@ def home():
 
 @app.route("/slack/events", methods=["POST"])
 def slack_events():
-    """Handles Slack event subscriptions"""
+    """Handles Slack event subscriptions, including challenge verification"""
     data = request.json
 
-    # Verify Slack Challenge (For First-Time Setup)
+    # ✅ Fix: Respond to Slack's challenge request
     if "challenge" in data:
         return jsonify({"challenge": data["challenge"]})
 
