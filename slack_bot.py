@@ -19,10 +19,10 @@ def home():
 @app.route("/slack/events", methods=["POST"])
 def slack_events():
     """Handles Slack event subscriptions, including challenge verification"""
-    data = request.json
+    data = request.get_json()
 
-    # ✅ Fix: Respond to Slack's challenge request as plaintext
-    if data.get("type") == "url_verification" and "challenge" in data:
+    # ✅ Fix: Respond to Slack's challenge request in the exact format required
+    if data.get("type") == "url_verification":
         return data["challenge"], 200, {"Content-Type": "text/plain"}
 
     # Process Slack Messages
@@ -70,3 +70,4 @@ def send_message(channel, text):
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=int(os.environ.get("PORT", 5000)))
+
