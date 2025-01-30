@@ -17,39 +17,43 @@ def home():
 
 @app.route("/slack/events", methods=["POST"])
 def slack_events():
+    """Handles Slack event subscriptions"""
     data = request.json
 
-    # Verify Slack Challenge (Needed for First-Time Setup)
+    # Verify Slack Challenge (For First-Time Setup)
     if "challenge" in data:
         return jsonify({"challenge": data["challenge"]})
 
-    # Handle Slack Messages
+    # Process Slack Messages
     if "event" in data:
         event = data["event"]
-        if event.get("type") == "message" and "subtype" not in event:
-            user = event.get("user")
-            text = event.get("text")
-            channel = event.get("channel")
 
-            # Process the message with CrewAI
-            response = process_with_crewai(text)
-            send_message(channel, response)
+        # Only process user messages (ignore bot messages)
+        if event.get("type") == "message" and "subtype" not in event:
+            channel = event.get("channel")
+            user_message = event.get("text")
+
+            # Process message with CrewAI
+            bot_response = process_with_crewai(user_message)
+
+            # Send response back to Slack
+            send_message(channel, bot_response)
 
     return jsonify({"status": "ok"})
 
 def process_with_crewai(message):
-    """ CrewAI Processing Function """
+    """Processes the Slack message using CrewAI"""
     agent = Agent(
         role="AI Assistant",
         goal="Help users by answering questions in Slack",
         verbose=True,
         memory=True,
-        backstory="You are a helpful AI bot that provides great answers."
+        backstory="You are a helpful AI bot that provides intelligent answers."
     )
 
     task = Task(
-        description=f"Answer this Slack message: {message}",
-        expected_output="A well-structured and helpful response.",
+        description=f"Generate a helpful response to this message: {message}",
+        expected_output="A well-structured and informative response.",
         agent=agent
     )
 
@@ -57,7 +61,7 @@ def process_with_crewai(message):
     return crew.kickoff()
 
 def send_message(channel, text):
-    """ Sends a message back to Slack """
+    """Sends a message to Slack"""
     try:
         slack_client.chat_postMessage(channel=channel, text=text)
     except SlackApiError as e:
