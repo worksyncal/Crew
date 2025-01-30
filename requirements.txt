@@ -2,4 +2,10 @@ crewai
 slack_sdk
 flask
 gunicorn
+crewai
+slack_sdk
+flask
+gunicorn
+tiktoken==0.5.1
+setuptools==58.0.4
 
