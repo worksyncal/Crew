@@ -1,1 +1,5 @@
+crewai
+slack_sdk
+flask
+gunicorn
 
