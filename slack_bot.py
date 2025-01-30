@@ -22,7 +22,7 @@ def slack_events():
 
     # ✅ Fix: Respond to Slack's challenge request
     if "challenge" in data:
-        return jsonify({"challenge": data["challenge"]})
+        return jsonify({"challenge": data["challenge"]}), 200
 
     # Process Slack Messages
     if "event" in data:
@@ -39,7 +39,7 @@ def slack_events():
             # Send response back to Slack
             send_message(channel, bot_response)
 
-    return jsonify({"status": "ok"})
+    return jsonify({"status": "ok"}), 200
 
 def process_with_crewai(message):
     """Processes the Slack message using CrewAI"""
