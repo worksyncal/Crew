@@ -8,4 +8,4 @@ flask
 gunicorn
 tiktoken==0.5.1
 setuptools==58.0.4
-
+wheel==0.38.4
