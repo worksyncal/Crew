@@ -2,6 +2,7 @@ from flask import Flask, request, jsonify
 from slack_sdk import WebClient
 from slack_sdk.errors import SlackApiError
 import os
+
 from crewai import Agent, Task, Crew
 
 # Load Slack Bot Token from Heroku Environment Variables
@@ -20,9 +21,9 @@ def slack_events():
     """Handles Slack event subscriptions, including challenge verification"""
     data = request.json
 
-    # ✅ Fix: Respond to Slack's challenge request
-    if "challenge" in data:
-        return jsonify({"challenge": data["challenge"]}), 200
+    # ✅ Fix: Respond to Slack's challenge request as plaintext
+    if data.get("type") == "url_verification" and "challenge" in data:
+        return data["challenge"], 200, {"Content-Type": "text/plain"}
 
     # Process Slack Messages
     if "event" in data:
